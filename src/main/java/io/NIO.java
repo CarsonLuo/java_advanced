@@ -28,7 +28,7 @@ public class NIO {
                 System.out.println("accept client, client port : " + client.socket().getPort()
                         + ", add client list, list size : " + clientList.size());
             }
-            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4096);
+            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4096); // ByteBuffer.allocate() 分配到堆里, allocateDirect() 分配到对外
             for (SocketChannel c : clientList){
                 int num = c.read(byteBuffer);
                 if(num > 0){
