@@ -8,6 +8,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * BIO, 伪异步
+ * 由于read/write都是阻塞的, 阻塞时间取决于对方I/O处理速度,网络I/O的处理速度
+ *
+ * 假如通信对方应答时间很长, 线程池中的所有线程都会被阻塞, 队列中的消息也就没法消化了
  */
 public class BioFeignAyncTimerServer {
     private final static ThreadPoolExecutor POOL_EXECUTOR =
