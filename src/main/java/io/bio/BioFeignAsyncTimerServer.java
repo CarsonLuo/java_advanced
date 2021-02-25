@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  *
  * 假如通信对方应答时间很长, 线程池中的所有线程都会被阻塞, 队列中的消息也就没法消化了
  */
-public class BioFeignAyncTimerServer {
+public class BioFeignAsyncTimerServer {
     private final static ThreadPoolExecutor POOL_EXECUTOR =
             new ThreadPoolExecutor(8, 16, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(100), new ThreadPoolExecutor.AbortPolicy());
 
