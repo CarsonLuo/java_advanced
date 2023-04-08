@@ -1,5 +1,7 @@
 package concurrent;
 
+import org.junit.Test;
+
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
