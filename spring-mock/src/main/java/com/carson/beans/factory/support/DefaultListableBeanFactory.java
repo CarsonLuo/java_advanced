@@ -45,7 +45,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     }
 
     @Override
-    public <T> Map<String, T> getBeanOfType(Class<T> type) throws BeansException {
+    public <T> Map<String, T> getBeansOfType(Class<T> type) throws BeansException {
         Map<String, T> ret = new HashMap<>();
         beanDefinitionMap.forEach((beanName, beanDefinition) -> {
             if (type.isAssignableFrom(beanDefinition.getBeanClass())) {

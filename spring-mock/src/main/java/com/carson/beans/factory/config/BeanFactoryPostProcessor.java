@@ -5,8 +5,14 @@ import com.carson.beans.factory.ConfigurableListableBeanFactory;
 
 /**
  * 容器扩展机制: 允许自定义修改BeanDefinition的属性值
- * <p/>
+ * <p>
  * postProcessor : 后处理程序
+ * placeholder : 占位符
+ * configurer : 配置器
+ * <p>
+ * 两个重要的实现类:
+ * PropertyPlaceholderConfigurer : 用properties文件的配置值替换xml文件中的占位符
+ * CustomEditorConfigurer : 实现类型转化
  *
  * @author carson_luo
  */
