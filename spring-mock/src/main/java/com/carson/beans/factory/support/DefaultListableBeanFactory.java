@@ -39,6 +39,12 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     }
 
     @Override
+    public String[] getBeanDefinitionNames() {
+        Set<String> beanNameSet = beanDefinitionMap.keySet();
+        return beanNameSet.toArray(new String[beanNameSet.size()]);
+    }
+
+    @Override
     public <T> Map<String, T> getBeanOfType(Class<T> type) throws BeansException {
         Map<String, T> ret = new HashMap<>();
         beanDefinitionMap.forEach((beanName, beanDefinition) -> {
@@ -51,8 +57,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     }
 
     @Override
-    public String[] getBeanDefinitionNames() {
-        Set<String> beanNameSet = beanDefinitionMap.keySet();
-        return beanNameSet.toArray(new String[beanNameSet.size()]);
+    public void preInstantiateSingletons() throws BeansException {
+        beanDefinitionMap.keySet().forEach(beanName -> getBean(beanName));
     }
 }

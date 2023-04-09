@@ -5,6 +5,7 @@ import com.carson.beans.PropertyValue;
 import com.carson.beans.exception.BeansException;
 import com.carson.beans.factory.config.AutowireCapableBeanFactory;
 import com.carson.beans.factory.config.BeanDefinition;
+import com.carson.beans.factory.config.BeanPostProcessor;
 import com.carson.beans.factory.config.BeanReference;
 
 /**
@@ -34,6 +35,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             // 填充属性
             applyPropertyValues(beanName, bean, beanDefinition);
 
+            // v3 版本 引入 BeanPostProcessor
+            bean = initializeBean(beanName, bean, beanDefinition);
+
         } catch (Exception e) {
             throw new BeansException("Instantiation of bean failed", e);
         }
@@ -59,11 +63,61 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                     BeanReference beanReference = (BeanReference) value;
                     value = getBean(beanReference.getBeanName());
                 }
+
+                // 通过反射设置属性
                 BeanUtil.setFieldValue(bean, propertyValue.getName(), value);
             }
         } catch (Exception e) {
             throw new BeansException("Error setting property values for bean : " + beanName, e);
         }
+    }
+
+    protected Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
+
+        // 执行 BeanPostProcessor 的前置处理
+        Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
+
+        // 执行 Bean 的初始化方法
+        invokeInitMethods(beanName, wrappedBean, beanDefinition);
+
+        //执行 BeanPostProcessor 的后置处理
+        wrappedBean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
+
+        return wrappedBean;
+    }
+
+    @Override
+    public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName) throws BeansException {
+        Object resultBean = existingBean;
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            Object currentBean = beanPostProcessor.postProcessBeforeInitialization(existingBean, beanName);
+            if (currentBean == null) {
+                return resultBean;
+            }
+            resultBean = currentBean;
+        }
+        return resultBean;
+    }
+
+    @Override
+    public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName) throws BeansException {
+        Object resultBean = existingBean;
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            Object currentBean = beanPostProcessor.postProcessAfterInitialization(existingBean, beanName);
+            if (currentBean == null) {
+                return resultBean;
+            }
+            resultBean = currentBean;
+        }
+        return resultBean;
+    }
+
+    /**
+     * 执行 Bean 的初始化方法
+     */
+    protected void invokeInitMethods(String beanName, Object bean, BeanDefinition beanDefinition) {
+        // TODO
+        System.out.println("执行了 Bean[ " + beanName + " ]的初始化方法");
     }
 
     public InstantiationStrategy getInstantiationStrategy() {

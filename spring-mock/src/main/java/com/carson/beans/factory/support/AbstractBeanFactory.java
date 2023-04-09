@@ -2,7 +2,11 @@ package com.carson.beans.factory.support;
 
 import com.carson.beans.exception.BeansException;
 import com.carson.beans.factory.config.BeanDefinition;
+import com.carson.beans.factory.config.BeanPostProcessor;
 import com.carson.beans.factory.config.ConfigurableBeanFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author carson_luo
@@ -19,6 +23,8 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
      */
     protected abstract BeanDefinition getBeanDefinition(String beanName) throws BeansException;
 
+    private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
+
     @Override
     public Object getBean(String name) throws BeansException {
         Object bean = getSingleton(name);
@@ -32,5 +38,16 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     @Override
     public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
         return ((T) getBean(name));
+    }
+
+    @Override
+    public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
+        // 有则覆盖
+        this.beanPostProcessors.remove(beanPostProcessor);
+        this.beanPostProcessors.add(beanPostProcessor);
+    }
+
+    public List<BeanPostProcessor> getBeanPostProcessors() {
+        return beanPostProcessors;
     }
 }
