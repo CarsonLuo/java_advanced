@@ -5,6 +5,7 @@ import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.StrUtil;
 import com.carson.beans.PropertyValue;
 import com.carson.beans.exception.BeansException;
+import com.carson.beans.factory.BeanFactoryAware;
 import com.carson.beans.factory.DisposableBean;
 import com.carson.beans.factory.InitializingBean;
 import com.carson.beans.factory.config.AutowireCapableBeanFactory;
@@ -131,6 +132,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      * 执行 Bean 的初始化方法
      */
     protected void invokeInitMethods(String beanName, Object bean, BeanDefinition beanDefinition) throws Throwable {
+        if (bean instanceof BeanFactoryAware beanFactoryAwareBean) {
+            System.out.printf("""
+                    AbstractAutowireCapableBeanFactory#invokeInitMethods(BeanFactoryAware) -> beanName: %s
+                    """, beanName);
+            beanFactoryAwareBean.setBeanFactory(this);
+        }
         if (bean instanceof InitializingBean initializingBean) {
             initializingBean.afterPropertiesSet();
         }
