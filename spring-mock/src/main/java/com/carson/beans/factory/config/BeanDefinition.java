@@ -14,6 +14,10 @@ import com.carson.beans.PropertyValues;
  */
 public class BeanDefinition {
 
+    public static final String SCOPE_SINGLETON = "singleton";
+
+    public static final String SCOPE_PROTOTYPE = "prototype";
+
     private Class<?> beanClass;
 
     private PropertyValues propertyValues;
@@ -22,6 +26,12 @@ public class BeanDefinition {
 
     private String destroyMethodName;
 
+    private String scope = SCOPE_SINGLETON;
+
+    private boolean singleton = true;
+
+    private boolean prototype = false;
+
     public BeanDefinition(Class<?> beanClass) {
         this(beanClass, null);
     }
@@ -29,6 +39,20 @@ public class BeanDefinition {
     public BeanDefinition(Class<?> beanClass, PropertyValues propertyValues) {
         this.beanClass = beanClass;
         this.propertyValues = propertyValues != null ? propertyValues : new PropertyValues();
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+        this.singleton = SCOPE_SINGLETON.equals(scope);
+        this.prototype = SCOPE_PROTOTYPE.equals(scope);
+    }
+
+    public boolean isSingleton() {
+        return this.singleton;
+    }
+
+    public boolean isPrototype() {
+        return this.prototype;
     }
 
     public Class<?> getBeanClass() {

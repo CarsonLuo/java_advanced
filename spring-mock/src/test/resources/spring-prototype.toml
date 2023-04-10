@@ -1,0 +1,8 @@
+[[beans]]
+id = "car"
+class = "com.carson.beans.factory.bean.Car"
+scope = "prototype"
+
+[beans.property]
+brand = "benz"
+speed = 120.88

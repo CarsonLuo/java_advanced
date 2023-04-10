@@ -29,6 +29,7 @@ public class TomlBeanDefinitionReader extends AbstractBeanDefinitionReader {
     public static final String NAME_ATTRIBUTE = "name";
     public static final String CLASS_ATTRIBUTE = "class";
     public static final String REF_ATTRIBUTE = "ref";
+    public static final String SCOPE_ATTRIBUTE = "scope";
 
     public static final String INIT_METHOD_ATTRIBUTE = "init-method";
     public static final String DESTROY_METHOD_ATTRIBUTE = "destroy-method";
@@ -69,6 +70,7 @@ public class TomlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             String className = (String) beanInfoMap.getOrDefault(CLASS_ATTRIBUTE, StrUtil.EMPTY);
             String initMethodName = (String) beanInfoMap.getOrDefault(INIT_METHOD_ATTRIBUTE, StrUtil.EMPTY);
             String destroyMethodName = (String) beanInfoMap.getOrDefault(DESTROY_METHOD_ATTRIBUTE, StrUtil.EMPTY);
+            String scope = (String) beanInfoMap.getOrDefault(SCOPE_ATTRIBUTE, StrUtil.EMPTY);
 
             Class<?> clazz;
             try {
@@ -92,6 +94,7 @@ public class TomlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             BeanDefinition beanDefinition = new BeanDefinition(clazz);
             beanDefinition.setInitMethodName(initMethodName);
             beanDefinition.setDestroyMethodName(destroyMethodName);
+            beanDefinition.setScope(scope);
             @SuppressWarnings("unchecked")
             Map<String, Object> propertyMap = (Map<String, Object>) beanInfoMap.get(PROPERTY_ELEMENT);
             if (CollectionUtil.isEmpty(propertyMap)) {
