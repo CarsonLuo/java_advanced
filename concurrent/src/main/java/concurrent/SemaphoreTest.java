@@ -17,7 +17,7 @@ public class SemaphoreTest {
         }
     }
 
-    public static Thread getThread(String name){
+    public static Thread getThread(String name) {
         return new Thread(() -> {
             try {
                 semaphore.acquire();
@@ -25,7 +25,7 @@ public class SemaphoreTest {
                 System.out.println("read thread : " + name + " done!");
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 semaphore.release();
             }
         });

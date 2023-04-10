@@ -1,0 +1,17 @@
+[[beans]]
+id = "person"
+class = "com.carson.beans.factory.bean.Person"
+
+[beans.property]
+name = "carson"
+age = 18
+
+[[beans.property.ref]]
+car = "car"
+
+[[beans]]
+id = "car"
+class = "com.carson.beans.factory.bean.Car"
+
+[beans.property]
+brand = "benz"
