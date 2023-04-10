@@ -11,7 +11,7 @@ public class CustomBeanPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        System.out.println("CustomBeanPostProcessor#postProcessBeforeInitialization");
+        System.out.println("CustomBeanPostProcessor#postProcessBeforeInitialization -> beanName : " + beanName);
         if (!beanName.equals("car")) {
             return bean;
         }
@@ -22,7 +22,7 @@ public class CustomBeanPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        System.out.println("CustomBeanPostProcessor#postProcessAfterInitialization");
+        System.out.println("CustomBeanPostProcessor#postProcessAfterInitialization -> beanName : " + beanName);
         return bean;
     }
 }

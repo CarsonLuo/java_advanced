@@ -11,7 +11,6 @@ import java.util.Map;
 
 /**
  * @author carson_luo
- *
  * @see #invokeBeanFactoryPostProcessors,#registerBeanPostProcessors
  * 自动识别了 BeanFactoryPostProcessor, BeanPostProcessor
  */
@@ -75,5 +74,27 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
     protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
         Map<String, BeanPostProcessor> beanPostProcessorMap = beanFactory.getBeansOfType(BeanPostProcessor.class);
         beanPostProcessorMap.forEach((_ignore, beanPostProcessor) -> beanFactory.addBeanPostProcessor(beanPostProcessor));
+    }
+
+    /**
+     * 为了确保销毁方法在虚拟机关闭之前执行, 向虚拟机中注册一个钩子方法
+     * <p>
+     * 非web应用需要手动调用该方法, 或者调用 #close() 关闭容器
+     */
+    public void registerShutdownHook() {
+        Thread shutdownHook = new Thread(this::doClose);
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
+    }
+
+    public void close() {
+        doClose();
+    }
+
+    protected void doClose() {
+        destroyBean();
+    }
+
+    protected void destroyBean() {
+        getBeanFactory().destroySingletons();
     }
 }

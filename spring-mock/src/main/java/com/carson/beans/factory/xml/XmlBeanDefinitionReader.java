@@ -32,6 +32,9 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
     public static final String VALUE_ATTRIBUTE = "value";
     public static final String REF_ATTRIBUTE = "ref";
 
+    public static final String INIT_METHOD_ATTRIBUTE = "init-method";
+    public static final String DESTROY_METHOD_ATTRIBUTE = "destroy-method";
+
     public XmlBeanDefinitionReader(BeanDefinitionRegistry beanRegistry) {
         super(beanRegistry);
     }
@@ -70,6 +73,8 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             String id = beanElem.getAttribute(ID_ATTRIBUTE);
             String name = beanElem.getAttribute(NAME_ATTRIBUTE);
             String className = beanElem.getAttribute(CLASS_ATTRIBUTE);
+            String initMethod = beanElem.getAttribute(INIT_METHOD_ATTRIBUTE);
+            String destroyMethod = beanElem.getAttribute(DESTROY_METHOD_ATTRIBUTE);
 
             Class<?> clazz;
             try {
@@ -91,6 +96,8 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             }
             // 分析 & 构建 BeanDefinition
             BeanDefinition beanDefinition = new BeanDefinition(clazz);
+            beanDefinition.setInitMethodName(initMethod);
+            beanDefinition.setDestroyMethodName(destroyMethod);
             for (int j = 0; j < beanElem.getChildNodes().getLength(); j++) {
                 Node propertyNode = beanElem.getChildNodes().item(j);
                 if (!(propertyNode instanceof Element propertyElem)) {

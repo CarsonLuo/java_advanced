@@ -1,15 +1,36 @@
 package com.carson.beans.factory.bean;
 
+import com.carson.beans.factory.DisposableBean;
+import com.carson.beans.factory.InitializingBean;
+
 /**
  * @author carson_luo
  */
-public class Person {
+public class Person implements InitializingBean, DisposableBean {
 
     private String name;
 
     private Integer age;
 
     private Car car;
+
+    public void customInitMethod() {
+        this.age = 999;
+    }
+
+    public void customDestroyMethod() {
+        this.age = null;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("Person -> InitializingBean#afterPropertiesSet");
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("Person -> DisposableBean#destroy");
+    }
 
     public String getName() {
         return name;

@@ -13,6 +13,7 @@ public class CustomBeanFactoryPostProcessor implements BeanFactoryPostProcessor 
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        System.out.println("CustomBeanFactoryPostProcessor#postProcessBeanFactory");
         BeanDefinition beanDefinition = beanFactory.getBeanDefinition("person");
         PropertyValue propertyValue = new PropertyValue("age", 20);
         beanDefinition.getPropertyValues().addPropertyValue(propertyValue);

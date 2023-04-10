@@ -7,5 +7,13 @@ import com.carson.beans.factory.HierarchicalBeanFactory;
  */
 public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, SingletonBeanRegistry {
 
+    /**
+     * 添加 BeanPostProcessor
+     */
     void addBeanPostProcessor(BeanPostProcessor beanPostProcessor);
+
+    /**
+     * 销毁单例Bean
+     */
+    void destroySingletons();
 }
