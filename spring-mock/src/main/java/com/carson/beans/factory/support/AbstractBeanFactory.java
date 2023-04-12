@@ -1,12 +1,15 @@
 package com.carson.beans.factory.support;
 
 import com.carson.beans.exception.BeansException;
+import com.carson.beans.factory.FactoryBean;
 import com.carson.beans.factory.config.BeanDefinition;
 import com.carson.beans.factory.config.BeanPostProcessor;
 import com.carson.beans.factory.config.ConfigurableBeanFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author carson_luo
@@ -25,14 +28,17 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
+    private final Map<String, Object> factoryBeanObjectCache = new HashMap<>();
+
     @Override
-    public Object getBean(String name) throws BeansException {
-        Object bean = getSingleton(name);
+    public Object getBean(String beanName) throws BeansException {
+        Object bean = getSingleton(beanName);
         if (bean != null) {
-            return bean;
+            return getObjectForBeanInstance(bean, beanName);
         }
-        BeanDefinition beanDefinition = getBeanDefinition(name);
-        return createBean(name, beanDefinition);
+        BeanDefinition beanDefinition = getBeanDefinition(beanName);
+        Object createdBean = createBean(beanName, beanDefinition);
+        return getObjectForBeanInstance(createdBean, beanName);
     }
 
     @Override
@@ -49,5 +55,29 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     public List<BeanPostProcessor> getBeanPostProcessors() {
         return beanPostProcessors;
+    }
+
+    protected Object getObjectForBeanInstance(Object beanInstance, String beanName) {
+        // 不是 FactoryBean 类型的, 直接返回
+        if (!(beanInstance instanceof FactoryBean<?>)) {
+            return beanInstance;
+        }
+        FactoryBean<?> factoryBean = (FactoryBean<?>) beanInstance;
+        try {
+            // 如果该 FactoryBean 不是单例, 则创建
+            if (!factoryBean.isSingleton()) {
+                return factoryBean.getObject();
+            }
+            // 单例FactoryBean, 看下缓存中有没有, 没有则创建&存入缓存
+            Object existFactoryBean = factoryBeanObjectCache.get(beanName);
+            if (existFactoryBean != null) {
+                return existFactoryBean;
+            }
+            Object createdFactoryBean = factoryBean.getObject();
+            factoryBeanObjectCache.put(beanName, createdFactoryBean);
+            return createdFactoryBean;
+        } catch (Exception e) {
+            throw new BeansException("FactoryBean threw exception on object[" + beanName + "] creation", e);
+        }
     }
 }

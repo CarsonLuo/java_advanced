@@ -94,7 +94,9 @@ public class TomlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             BeanDefinition beanDefinition = new BeanDefinition(clazz);
             beanDefinition.setInitMethodName(initMethodName);
             beanDefinition.setDestroyMethodName(destroyMethodName);
-            beanDefinition.setScope(scope);
+            if (StrUtil.isNotEmpty(scope)) {
+                beanDefinition.setScope(scope);
+            }
             @SuppressWarnings("unchecked")
             Map<String, Object> propertyMap = (Map<String, Object>) beanInfoMap.get(PROPERTY_ELEMENT);
             if (CollectionUtil.isEmpty(propertyMap)) {

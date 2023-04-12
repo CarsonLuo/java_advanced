@@ -1,0 +1,6 @@
+[[beans]]
+id = "car"
+class = "com.carson.beans.factory.bean.CarFactoryBean"
+
+[beans.property]
+brand = "prosche"
