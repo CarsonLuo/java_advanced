@@ -17,7 +17,7 @@
         <property name="speed" value="120.88"/>
     </bean>
 
-    <bean class="com.carson.beans.factory.common.CustomBeanFactoryPostProcessor"/>
+    <bean class="com.carson.common.CustomBeanFactoryPostProcessor"/>
 
-    <bean class="com.carson.beans.factory.common.CustomBeanPostProcessor"/>
+    <bean class="com.carson.common.CustomBeanPostProcessor"/>
 </beans>

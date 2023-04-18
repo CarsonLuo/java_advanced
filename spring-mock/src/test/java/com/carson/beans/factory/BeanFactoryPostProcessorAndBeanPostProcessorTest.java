@@ -2,8 +2,8 @@ package com.carson.beans.factory;
 
 import com.carson.beans.factory.bean.Car;
 import com.carson.beans.factory.bean.Person;
-import com.carson.beans.factory.common.CustomBeanFactoryPostProcessor;
-import com.carson.beans.factory.common.CustomBeanPostProcessor;
+import com.carson.common.CustomBeanFactoryPostProcessor;
+import com.carson.common.CustomBeanPostProcessor;
 import com.carson.beans.factory.support.DefaultListableBeanFactory;
 import com.carson.beans.factory.toml.TomlBeanDefinitionReader;
 import org.junit.jupiter.api.Assertions;

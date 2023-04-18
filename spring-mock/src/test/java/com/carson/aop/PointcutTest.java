@@ -1,7 +1,7 @@
 package com.carson.aop;
 
 import com.carson.aop.aspectj.AspectJExpressionPointcut;
-import com.carson.beans.factory.service.HelloService;
+import com.carson.service.HelloService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

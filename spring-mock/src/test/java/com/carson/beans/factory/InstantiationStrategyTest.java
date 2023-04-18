@@ -1,7 +1,7 @@
 package com.carson.beans.factory;
 
 import com.carson.beans.factory.config.BeanDefinition;
-import com.carson.beans.factory.service.HaveArgsConstructorService;
+import com.carson.service.HaveArgsConstructorService;
 import com.carson.beans.factory.support.CglibSubclassingInstantiationStrategy;
 import com.carson.beans.factory.support.DefaultListableBeanFactory;
 import org.junit.jupiter.api.Test;
