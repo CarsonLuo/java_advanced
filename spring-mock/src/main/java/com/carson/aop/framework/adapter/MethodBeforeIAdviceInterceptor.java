@@ -7,11 +7,11 @@ import org.aopalliance.intercept.MethodInvocation;
 /**
  * @author carson_luo
  */
-public class MethodInterceptorAdapter implements MethodInterceptor {
+public class MethodBeforeIAdviceInterceptor implements MethodInterceptor {
 
     private MethodBeforeAdvice advice;
 
-    public MethodInterceptorAdapter(MethodBeforeAdvice advice) {
+    public MethodBeforeIAdviceInterceptor(MethodBeforeAdvice advice) {
         this.advice = advice;
     }
 

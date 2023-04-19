@@ -1,14 +1,16 @@
 package com.carson.aop;
 
 import com.carson.aop.aspectj.AspectJExpressionPointcut;
+import com.carson.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import com.carson.aop.framework.CglibAopProxy;
 import com.carson.aop.framework.JdkDynamicAopProxy;
 import com.carson.aop.framework.ProxyFactory;
-import com.carson.aop.framework.adapter.MethodInterceptorAdapter;
+import com.carson.aop.framework.adapter.MethodBeforeIAdviceInterceptor;
 import com.carson.common.WorkServiceBeforeAdvice;
 import com.carson.common.WorkServiceInterceptor;
 import com.carson.service.WorkService;
 import com.carson.service.WorkServiceImpl;
+import org.aopalliance.intercept.MethodInterceptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +45,7 @@ public class DynamicProxyTest {
     }
 
     @Test
-    public void TestProxyFactory(){
+    public void TestProxyFactory() {
         // JDK 动态代理
         advisedSupport.setProxyTargetClass(false);
         var proxyFactory = new ProxyFactory(advisedSupport);
@@ -57,9 +59,26 @@ public class DynamicProxyTest {
     }
 
     @Test
-    public void TestBeforeAdvice(){
-        advisedSupport.setMethodInterceptor(new MethodInterceptorAdapter(new WorkServiceBeforeAdvice()));
+    public void TestBeforeAdvice() {
+        advisedSupport.setMethodInterceptor(new MethodBeforeIAdviceInterceptor(new WorkServiceBeforeAdvice()));
         WorkService proxy = (WorkService) new ProxyFactory(advisedSupport).getProxy();
         proxy.explode();
+    }
+
+    @Test
+    public void TestPointcutAdvisor() {
+        var pointcutAdvisor = new AspectJExpressionPointcutAdvisor();
+        pointcutAdvisor.setExpression("execution(* com.carson.service.WorkService.explode(..))");
+        pointcutAdvisor.setAdvice(new MethodBeforeIAdviceInterceptor(new WorkServiceBeforeAdvice()));
+
+        WorkService workService = new WorkServiceImpl();
+        if (pointcutAdvisor.getPointcut().getClassFilter().matches(workService.getClass())) {
+            var advisedSupport = new AdvisedSupport();
+            advisedSupport.setTargetSource(new TargetSource(workService));
+            advisedSupport.setMethodMatcher(pointcutAdvisor.getPointcut().getMethodMatcher());
+            advisedSupport.setMethodInterceptor((MethodInterceptor) pointcutAdvisor.getAdvice());
+            var proxy = (WorkService) new ProxyFactory(advisedSupport).getProxy();
+            proxy.explode();
+        }
     }
 }
