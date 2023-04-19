@@ -3,6 +3,7 @@ package com.carson.aop;
 import com.carson.aop.aspectj.AspectJExpressionPointcut;
 import com.carson.aop.framework.CglibAopProxy;
 import com.carson.aop.framework.JdkDynamicAopProxy;
+import com.carson.aop.framework.ProxyFactory;
 import com.carson.common.WorkServiceInterceptor;
 import com.carson.service.WorkService;
 import com.carson.service.WorkServiceImpl;
@@ -37,5 +38,19 @@ public class DynamicProxyTest {
     public void TestCglibProxy() {
         WorkService proxy = (WorkService) new CglibAopProxy(advisedSupport).getProxy();
         proxy.explode();
+    }
+
+    @Test
+    public void TestProxyFactory(){
+        // JDK 动态代理
+        advisedSupport.setProxyTargetClass(false);
+        var proxyFactory = new ProxyFactory(advisedSupport);
+        WorkService proxy = (WorkService) proxyFactory.getProxy();
+        proxy.explode();
+
+        // CGLIB 动态代理
+        advisedSupport.setProxyTargetClass(true);
+        WorkService cglibProxy = (WorkService) new ProxyFactory(advisedSupport).getProxy();
+        cglibProxy.explode();
     }
 }
