@@ -4,6 +4,8 @@ import com.carson.aop.aspectj.AspectJExpressionPointcut;
 import com.carson.aop.framework.CglibAopProxy;
 import com.carson.aop.framework.JdkDynamicAopProxy;
 import com.carson.aop.framework.ProxyFactory;
+import com.carson.aop.framework.adapter.MethodInterceptorAdapter;
+import com.carson.common.WorkServiceBeforeAdvice;
 import com.carson.common.WorkServiceInterceptor;
 import com.carson.service.WorkService;
 import com.carson.service.WorkServiceImpl;
@@ -52,5 +54,12 @@ public class DynamicProxyTest {
         advisedSupport.setProxyTargetClass(true);
         WorkService cglibProxy = (WorkService) new ProxyFactory(advisedSupport).getProxy();
         cglibProxy.explode();
+    }
+
+    @Test
+    public void TestBeforeAdvice(){
+        advisedSupport.setMethodInterceptor(new MethodInterceptorAdapter(new WorkServiceBeforeAdvice()));
+        WorkService proxy = (WorkService) new ProxyFactory(advisedSupport).getProxy();
+        proxy.explode();
     }
 }
