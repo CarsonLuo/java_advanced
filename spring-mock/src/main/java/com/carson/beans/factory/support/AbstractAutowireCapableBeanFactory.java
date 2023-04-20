@@ -8,10 +8,7 @@ import com.carson.beans.exception.BeansException;
 import com.carson.beans.factory.BeanFactoryAware;
 import com.carson.beans.factory.DisposableBean;
 import com.carson.beans.factory.InitializingBean;
-import com.carson.beans.factory.config.AutowireCapableBeanFactory;
-import com.carson.beans.factory.config.BeanDefinition;
-import com.carson.beans.factory.config.BeanPostProcessor;
-import com.carson.beans.factory.config.BeanReference;
+import com.carson.beans.factory.config.*;
 
 import java.lang.reflect.Method;
 
@@ -25,6 +22,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
     @Override
     protected Object createBean(String beanName, BeanDefinition beanDefinition) throws BeansException {
+        // 如果bean需要代理, 则直接返回代理对象
+        Object bean = resolveBeforeInstantiation(beanName, beanDefinition);
+
+        if (bean != null) {
+            return bean;
+        }
+
         return doCreateBean(beanName, beanDefinition);
     }
 
@@ -102,6 +106,26 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         wrappedBean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
 
         return wrappedBean;
+    }
+
+    protected Object resolveBeforeInstantiation(String beanName, BeanDefinition beanDefinition) {
+        Object bean = applyBeanPostProcessorsBeforeInstantiation(beanDefinition.getBeanClass(), beanName);
+        if (bean != null) {
+            bean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
+        }
+        return bean;
+    }
+
+    protected Object applyBeanPostProcessorsBeforeInstantiation(Class<?> beanClass, String beanName) {
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor p) {
+                Object result = p.postProcessBeforeInstantiation(beanClass, beanName);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        return null;
     }
 
     @Override

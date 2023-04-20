@@ -5,7 +5,7 @@ import com.carson.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import com.carson.aop.framework.CglibAopProxy;
 import com.carson.aop.framework.JdkDynamicAopProxy;
 import com.carson.aop.framework.ProxyFactory;
-import com.carson.aop.framework.adapter.MethodBeforeIAdviceInterceptor;
+import com.carson.aop.framework.adapter.MethodBeforeAdviceInterceptor;
 import com.carson.common.WorkServiceBeforeAdvice;
 import com.carson.common.WorkServiceInterceptor;
 import com.carson.service.WorkService;
@@ -60,7 +60,7 @@ public class DynamicProxyTest {
 
     @Test
     public void TestBeforeAdvice() {
-        advisedSupport.setMethodInterceptor(new MethodBeforeIAdviceInterceptor(new WorkServiceBeforeAdvice()));
+        advisedSupport.setMethodInterceptor(new MethodBeforeAdviceInterceptor(new WorkServiceBeforeAdvice()));
         WorkService proxy = (WorkService) new ProxyFactory(advisedSupport).getProxy();
         proxy.explode();
     }
@@ -69,7 +69,7 @@ public class DynamicProxyTest {
     public void TestPointcutAdvisor() {
         var pointcutAdvisor = new AspectJExpressionPointcutAdvisor();
         pointcutAdvisor.setExpression("execution(* com.carson.service.WorkService.explode(..))");
-        pointcutAdvisor.setAdvice(new MethodBeforeIAdviceInterceptor(new WorkServiceBeforeAdvice()));
+        pointcutAdvisor.setAdvice(new MethodBeforeAdviceInterceptor(new WorkServiceBeforeAdvice()));
 
         WorkService workService = new WorkServiceImpl();
         if (pointcutAdvisor.getPointcut().getClassFilter().matches(workService.getClass())) {

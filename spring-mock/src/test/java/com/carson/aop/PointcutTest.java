@@ -14,7 +14,7 @@ public class PointcutTest {
 
     @Test
     public void TestPointcut() throws Exception {
-        var pointcut = new AspectJExpressionPointcut("execution(* com.carson.beans.factory.service.HelloService.*(..))");
+        var pointcut = new AspectJExpressionPointcut("execution(* com.carson.service.HelloService.*(..))");
         Class<HelloService> clazz = HelloService.class;
         Method method = clazz.getDeclaredMethod("sayHello");
         Assertions.assertTrue(pointcut.matches(clazz));
