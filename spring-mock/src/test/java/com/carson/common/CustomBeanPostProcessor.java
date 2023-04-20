@@ -1,4 +1,4 @@
-package com.carson.beans.factory.common;
+package com.carson.common;
 
 import com.carson.beans.exception.BeansException;
 import com.carson.beans.factory.bean.Car;

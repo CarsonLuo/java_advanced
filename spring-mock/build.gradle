@@ -10,6 +10,11 @@ repositories {
 }
 
 dependencies {
+    // https://mvnrepository.com/artifact/aopalliance/aopalliance
+    implementation 'aopalliance:aopalliance:1.0'
+
+    // https://mvnrepository.com/artifact/org.aspectj/aspectjweaver
+    implementation 'org.aspectj:aspectjweaver:1.9.19'
 
     // https://mvnrepository.com/artifact/cn.hutool/hutool-all
     implementation 'cn.hutool:hutool-all:5.8.16'

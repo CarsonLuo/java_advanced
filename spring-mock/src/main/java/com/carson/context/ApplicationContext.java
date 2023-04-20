@@ -14,5 +14,5 @@ import com.carson.core.io.ResourceLoader;
  *
  * @author carson_luo
  */
-public interface ApplicationContext extends ListableBeanFactory, HierarchicalBeanFactory, ResourceLoader {
+public interface ApplicationContext extends ListableBeanFactory, HierarchicalBeanFactory, ResourceLoader, ApplicationEventPublisher {
 }

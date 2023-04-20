@@ -1,7 +1,7 @@
 package com.carson.beans.factory;
 
 import com.carson.beans.factory.config.BeanDefinition;
-import com.carson.beans.factory.service.HelloService;
+import com.carson.service.HelloService;
 import com.carson.beans.factory.support.DefaultListableBeanFactory;
 import org.junit.jupiter.api.Test;
 
