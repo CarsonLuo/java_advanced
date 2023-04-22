@@ -5,6 +5,7 @@ import com.carson.beans.factory.FactoryBean;
 import com.carson.beans.factory.config.BeanDefinition;
 import com.carson.beans.factory.config.BeanPostProcessor;
 import com.carson.beans.factory.config.ConfigurableBeanFactory;
+import com.carson.util.StringValueResolver;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +31,8 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     private final Map<String, Object> factoryBeanObjectCache = new HashMap<>();
 
+    private final List<StringValueResolver> embeddedValueResolvers = new ArrayList<>();
+
     @Override
     public Object getBean(String beanName) throws BeansException {
         Object bean = getSingleton(beanName);
@@ -43,7 +46,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     @Override
     public <T> T getBean(String name, Class<T> requiredType) throws BeansException {
-        return ((T) getBean(name));
+        return (T) getBean(name);
     }
 
     @Override
@@ -53,16 +56,29 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         this.beanPostProcessors.add(beanPostProcessor);
     }
 
+    @Override
+    public void addEmbeddedValueResolver(StringValueResolver valueResolver) {
+        this.embeddedValueResolvers.add(valueResolver);
+    }
+
+    @Override
+    public String resolveEmbeddedValue(String value) {
+        String result = value;
+        for (StringValueResolver valueResolver : this.embeddedValueResolvers) {
+            result = valueResolver.resolveStringValue(value);
+        }
+        return result;
+    }
+
     public List<BeanPostProcessor> getBeanPostProcessors() {
         return beanPostProcessors;
     }
 
     protected Object getObjectForBeanInstance(Object beanInstance, String beanName) {
         // 不是 FactoryBean 类型的, 直接返回
-        if (!(beanInstance instanceof FactoryBean<?>)) {
+        if (!(beanInstance instanceof FactoryBean<?> factoryBean)) {
             return beanInstance;
         }
-        FactoryBean<?> factoryBean = (FactoryBean<?>) beanInstance;
         try {
             // 如果该 FactoryBean 不是单例, 则创建
             if (!factoryBean.isSingleton()) {

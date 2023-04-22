@@ -7,6 +7,7 @@ import com.carson.beans.factory.config.BeanDefinition;
 import com.carson.beans.factory.config.BeanFactoryPostProcessor;
 import com.carson.core.io.DefaultResourceLoader;
 import com.carson.core.io.Resource;
+import com.carson.util.StringValueResolver;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -30,15 +31,14 @@ public class PropertyPlaceholderConfigurer implements BeanFactoryPostProcessor {
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 
-        /*
-         * 加载属性配置文件
-         */
+        // 加载属性配置文件
         Properties properties = loadProperties();
 
-        /*
-         * 属性值替换占位符
-         */
+        // 属性值替换占位符
         processProperties(beanFactory, properties);
+
+        // 往容器中添加字符解析器, 供解析 @Value 使用
+        beanFactory.addEmbeddedValueResolver(new PlaceholderResolvingStringValueResolver(properties));
     }
 
     /**
@@ -77,21 +77,43 @@ public class PropertyPlaceholderConfigurer implements BeanFactoryPostProcessor {
         for (PropertyValue propertyValue : propertyValues.getPropertyValues()) {
             Object value = propertyValue.getValue();
             if (value instanceof String valurStr) {
-                // TODO 仅简单支持一个占位符的格式
-                StringBuffer buf = new StringBuffer(valurStr);
-                int startIdx = valurStr.indexOf(PLACEHOLDER_PREFIX);
-                int endIdx = valurStr.indexOf(PLACEHOLDER_SUFFIX);
-                if (startIdx != -1 && endIdx != -1 && startIdx < endIdx) {
-                    String propKey = valurStr.substring(startIdx + 2, endIdx);
-                    String propValue = properties.getProperty(propKey);
-                    buf.replace(startIdx, endIdx + 1, propValue);
-                    propertyValues.addPropertyValue(new PropertyValue(propertyValue.getName(), buf.toString()));
-                }
+                String v = resolvePlaceholder(valurStr, properties);
+                propertyValues.addPropertyValue(new PropertyValue(propertyValue.getName(), v));
             }
         }
     }
 
+    private String resolvePlaceholder(String value, Properties properties) {
+        // TODO 仅简单支持一个占位符的格式
+        StringBuilder buf = new StringBuilder(value);
+        int startIdx = value.indexOf(PLACEHOLDER_PREFIX);
+        int endIdx = value.indexOf(PLACEHOLDER_SUFFIX);
+        if (startIdx != -1 && endIdx != -1 && startIdx < endIdx) {
+            String propKey = value.substring(startIdx + 2, endIdx);
+            String propValue = properties.getProperty(propKey);
+            buf.replace(startIdx, endIdx + 1, propValue);
+        }
+        return buf.toString();
+    }
+
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    /**
+     * 字符解析器
+     */
+    private class PlaceholderResolvingStringValueResolver implements StringValueResolver {
+
+        private final Properties properties;
+
+        public PlaceholderResolvingStringValueResolver(Properties properties) {
+            this.properties = properties;
+        }
+
+        @Override
+        public String resolveStringValue(String strVal) {
+            return PropertyPlaceholderConfigurer.this.resolvePlaceholder(strVal, properties);
+        }
     }
 }

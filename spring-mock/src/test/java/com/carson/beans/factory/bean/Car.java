@@ -1,13 +1,18 @@
 package com.carson.beans.factory.bean;
 
+import com.carson.beans.factory.annotation.Value;
+import com.carson.stereotype.Component;
+
 /**
  * @author carson_luo
  */
+@Component
 public class Car {
 
     /**
      * 品牌
      */
+    @Value("${brand}")
     private String brand;
 
     /**

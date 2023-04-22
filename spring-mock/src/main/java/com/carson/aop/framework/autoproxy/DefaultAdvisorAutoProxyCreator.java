@@ -6,6 +6,7 @@ import com.carson.aop.Pointcut;
 import com.carson.aop.TargetSource;
 import com.carson.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import com.carson.aop.framework.ProxyFactory;
+import com.carson.beans.PropertyValues;
 import com.carson.beans.exception.BeansException;
 import com.carson.beans.factory.BeanFactory;
 import com.carson.beans.factory.BeanFactoryAware;
@@ -63,6 +64,11 @@ public class DefaultAdvisorAutoProxyCreator implements InstantiationAwareBeanPos
             throw new BeansException("Error create proxy bean for: " + beanName, ex);
         }
         return null;
+    }
+
+    @Override
+    public PropertyValues postProcessPropertyValues(PropertyValues pvs, Object bean, String beanName) throws BeansException {
+        return pvs;
     }
 
     /**

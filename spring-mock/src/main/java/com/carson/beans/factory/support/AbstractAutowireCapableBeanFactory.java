@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.StrUtil;
 import com.carson.beans.PropertyValue;
+import com.carson.beans.PropertyValues;
 import com.carson.beans.exception.BeansException;
 import com.carson.beans.factory.BeanFactoryAware;
 import com.carson.beans.factory.DisposableBean;
@@ -43,6 +44,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             // v2 版本 引入实例化策略 strategy
             bean = createBeanInstance(beanDefinition);
 
+            // 在Bean创建之后, 设置属性之前, 允许BeanPostProcessor修改属性值
+            applyBeanPostProcessorsBeforeApplyingPropertyValues(beanName, bean, beanDefinition);
+
             // 填充属性
             applyPropertyValues(beanName, bean, beanDefinition);
 
@@ -63,8 +67,29 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         return bean;
     }
 
+    /**
+     * 实例化bean
+     */
     protected Object createBeanInstance(BeanDefinition beanDefinition) {
         return getInstantiationStrategy().instantiate(beanDefinition);
+    }
+
+    /**
+     * 在Bean创建之后, 设置属性之前, 允许BeanPostProcessor修改属性值
+     */
+    protected void applyBeanPostProcessorsBeforeApplyingPropertyValues(String beanName, Object bean, BeanDefinition beanDefinition) {
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            if (!(beanPostProcessor instanceof InstantiationAwareBeanPostProcessor instantiationAwareBeanPostProcessor)) {
+                continue;
+            }
+            PropertyValues pvs = instantiationAwareBeanPostProcessor.postProcessPropertyValues(beanDefinition.getPropertyValues(), bean, beanName);
+            if (pvs == null) {
+                continue;
+            }
+            for (PropertyValue propertyValue : pvs.getPropertyValues()) {
+                beanDefinition.getPropertyValues().addPropertyValue(propertyValue);
+            }
+        }
     }
 
     protected void applyPropertyValues(String beanName, Object bean, BeanDefinition beanDefinition) {
@@ -107,6 +132,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         return wrappedBean;
     }
 
+    /**
+     * 执行 InstantiationAwareBeanPostProcessor的方法, 如果bean需要代理, 直接返回代理对象
+     */
     protected Object resolveBeforeInstantiation(String beanName, BeanDefinition beanDefinition) {
         Object bean = applyBeanPostProcessorsBeforeInstantiation(beanDefinition.getBeanClass(), beanName);
         if (bean != null) {
@@ -117,11 +145,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
     protected Object applyBeanPostProcessorsBeforeInstantiation(Class<?> beanClass, String beanName) {
         for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
-            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor p) {
-                Object result = p.postProcessBeforeInstantiation(beanClass, beanName);
-                if (result != null) {
-                    return result;
-                }
+            if (!(beanPostProcessor instanceof InstantiationAwareBeanPostProcessor instantiationAwareBeanPostProcessor)) {
+               continue;
+            }
+            Object result = instantiationAwareBeanPostProcessor.postProcessBeforeInstantiation(beanClass, beanName);
+            if (result != null) {
+                return result;
             }
         }
         return null;

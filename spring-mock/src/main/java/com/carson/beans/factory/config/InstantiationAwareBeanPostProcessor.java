@@ -1,5 +1,6 @@
 package com.carson.beans.factory.config;
 
+import com.carson.beans.PropertyValues;
 import com.carson.beans.exception.BeansException;
 
 /**
@@ -13,4 +14,9 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
      * 在bean实例化之前执行
      */
     Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException;
+
+    /**
+     * Bean实例化之后, 设置属性之前执行
+     */
+    PropertyValues postProcessPropertyValues(PropertyValues pvs, Object bean, String beanName) throws BeansException;
 }
