@@ -1,8 +1,11 @@
 package com.carson.service;
 
+import com.carson.stereotype.Component;
+
 /**
  * @author carson_luo
  */
+@Component
 public class HelloService {
 
     public String sayHello() {

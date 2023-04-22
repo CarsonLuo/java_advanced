@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 public class PropertyPlaceholderConfigurerTest {
 
     @Test
-    public void TestPropertyyPlaceholderConfigurer() {
+    public void TestPropertyPlaceholderConfigurer() {
         var applicationContext = new ClassPathXmlApplicationContext("classpath:spring-property-placeholder-configurer.xml");
         Car car = applicationContext.getBean("car", Car.class);
         Assertions.assertEquals("benz", car.getBrand());

@@ -16,6 +16,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.aspectj/aspectjweaver
     implementation 'org.aspectj:aspectjweaver:1.9.19'
 
+    // https://mvnrepository.com/artifact/org.dom4j/dom4j
+    implementation 'org.dom4j:dom4j:2.1.4'
+
     // https://mvnrepository.com/artifact/cn.hutool/hutool-all
     implementation 'cn.hutool:hutool-all:5.8.16'
 

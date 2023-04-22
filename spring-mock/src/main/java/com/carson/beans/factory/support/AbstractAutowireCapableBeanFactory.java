@@ -77,8 +77,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 // 实例化BeanA后填充属性时, 若PropertyValue#value为BeanReference, 则先去实例化BeanB
                 // 目前不考虑循环依赖
                 Object value = propertyValue.getValue();
-                if (value instanceof BeanReference) {
-                    BeanReference beanReference = (BeanReference) value;
+                if (value instanceof BeanReference beanReference) {
                     value = getBean(beanReference.getBeanName());
                 }
 
