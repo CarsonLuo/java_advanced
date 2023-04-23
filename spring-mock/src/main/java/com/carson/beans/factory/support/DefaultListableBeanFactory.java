@@ -5,6 +5,7 @@ import com.carson.beans.factory.config.BeanDefinition;
 import com.carson.beans.exception.BeansException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ import java.util.Set;
 public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
         implements BeanDefinitionRegistry, ConfigurableListableBeanFactory {
 
-    private Map<String, BeanDefinition> beanDefinitionMap = new HashMap<>();
+    private final Map<String, BeanDefinition> beanDefinitionMap = new HashMap<>();
 
     @Override
     public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
@@ -41,7 +42,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     @Override
     public String[] getBeanDefinitionNames() {
         Set<String> beanNameSet = beanDefinitionMap.keySet();
-        return beanNameSet.toArray(new String[beanNameSet.size()]);
+        return beanNameSet.toArray(String[]::new);
     }
 
     @Override
@@ -49,11 +50,24 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         Map<String, T> ret = new HashMap<>();
         beanDefinitionMap.forEach((beanName, beanDefinition) -> {
             if (type.isAssignableFrom(beanDefinition.getBeanClass())) {
-                T bean = (T) getBean(beanName);
+                T bean = type.cast(getBean(beanName));
                 ret.put(beanName, bean);
             }
         });
         return ret;
+    }
+
+    @Override
+    public <T> T getBean(Class<T> requiredType) throws BeansException {
+        List<String> beanNames = beanDefinitionMap.entrySet().stream()
+                .filter(e -> requiredType.isAssignableFrom(e.getValue().getBeanClass()))
+                .map(Map.Entry::getKey)
+                .toList();
+        if (beanNames.size() > 1) {
+            throw new BeansException(requiredType + " expected single bean but found " +
+                    beanNames.size() + ": " + beanNames);
+        }
+        return getBean(beanNames.get(0), requiredType);
     }
 
     @Override

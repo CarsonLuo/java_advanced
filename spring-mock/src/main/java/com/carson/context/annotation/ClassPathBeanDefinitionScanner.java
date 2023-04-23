@@ -1,6 +1,7 @@
 package com.carson.context.annotation;
 
 import cn.hutool.core.util.StrUtil;
+import com.carson.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import com.carson.beans.factory.config.BeanDefinition;
 import com.carson.beans.factory.support.BeanDefinitionRegistry;
 import com.carson.stereotype.Component;
@@ -12,7 +13,9 @@ import java.util.Set;
  */
 public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateComponentProvider {
 
-    private BeanDefinitionRegistry registry;
+    public static final String AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME = "org.springframework.context.annotation.internalAutowiredAnnotationProcessor";
+
+    private final BeanDefinitionRegistry registry;
 
     public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry) {
         this.registry = registry;
@@ -36,6 +39,8 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
                 registry.registerBeanDefinition(beanName, candidate);
             }
         }
+        // 注册处理 @Value 和 @Autowired 注解的BeanPostProcessor
+        registry.registerBeanDefinition(AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME, new BeanDefinition(AutowiredAnnotationBeanPostProcessor.class));
     }
 
     /**

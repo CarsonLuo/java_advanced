@@ -22,4 +22,9 @@ public interface BeanFactory {
      * 根据名称和类型查找bean
      */
     <T> T getBean(String name, Class<T> requiredType) throws BeansException;
+
+    /**
+     * 根据类型查找bean
+     */
+    <T> T getBean(Class<T> requiredType) throws BeansException;
 }

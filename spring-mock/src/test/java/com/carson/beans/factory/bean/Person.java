@@ -2,16 +2,22 @@ package com.carson.beans.factory.bean;
 
 import com.carson.beans.factory.DisposableBean;
 import com.carson.beans.factory.InitializingBean;
+import com.carson.beans.factory.annotation.Autowired;
+import com.carson.beans.factory.annotation.Qualifier;
+import com.carson.stereotype.Component;
 
 /**
  * @author carson_luo
  */
+@Component
 public class Person implements InitializingBean, DisposableBean {
 
     private String name;
 
     private Integer age;
 
+    @Autowired
+    @Qualifier(value = "car")
     private Car car;
 
     public void customInitMethod() {
