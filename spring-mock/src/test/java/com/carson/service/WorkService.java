@@ -9,4 +9,6 @@ public interface WorkService {
      * 爆破
      */
     void explode();
+
+    String getName();
 }
